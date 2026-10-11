@@ -1,0 +1,46 @@
+syntax = "proto3";
+package com.fintech.grpc;
+option java_multiple_files = true;
+option java_package = "com.fintech.grpc.ledger";
+option java_outer_classname = "LedgerProto";
+
+service LedgerService {
+  rpc RecordTransfer (TransferLedgerRequest) returns (LedgerResponse);
+  rpc RecordTopup (TopupLedgerRequest) returns (LedgerResponse);
+  rpc GetAccountBalance (BalanceRequest) returns (BalanceResponse);
+}
+message TransferLedgerRequest {
+  string transaction_id = 1;
+  string idempotency_key = 2;
+  string from_account_id = 3;
+  string to_account_id = 4;
+  double amount = 5;
+  string currency = 6;
+  string description = 7;
+}
+message TopupLedgerRequest {
+  string transaction_id = 1;
+  string idempotency_key = 2;
+  string user_account_id = 3;
+  double amount = 4;
+  string currency = 5;
+  string reference_code = 6;
+}
+message LedgerResponse {
+  bool success = 1;
+  string transaction_id = 2;
+  string status = 3;
+  string message = 4;
+  double from_balance_after = 5;
+  double to_balance_after = 6;
+  int64 timestamp = 7;
+}
+message BalanceRequest {
+  string account_id = 1;
+}
+message BalanceResponse {
+  string account_id = 1;
+  double balance = 2;
+  string currency = 3;
+  int64 last_entry_timestamp = 4;
+}

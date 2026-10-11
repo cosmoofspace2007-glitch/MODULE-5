@@ -1,0 +1,32 @@
+groups:
+  - name: fintech_financial_alerts
+    rules:
+      # Báo động đỏ: Sổ cái bị lệch tiền (Debit != Credit)
+      - alert: FinancialLedgerUnbalanced
+        expr: financial_unbalanced_ledgers_total > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "NGHIÊM TRỌNG: Phát hiện sai lệch tiền trong Sổ cái Kế toán kép!"
+          description: "Tổng nợ (Debit) không bằng tổng có (Credit). Hệ thống cần đóng băng tài khoản để hậu kiểm."
+
+      # Báo động tỷ lệ giao dịch thất bại vượt quá 2%
+      - alert: HighTransactionFailureRate
+        expr: (sum(rate(fintech_transactions_total{status="FAILED"}[2m])) / sum(rate(fintech_transactions_total[2m]))) * 100 > 2
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tỷ lệ lỗi giao dịch tăng cao (> 2%)"
+          description: "Tỷ lệ lỗi trong 2 phút qua đang ở mức {{ $value }}%."
+
+      # Báo động tấn công giả mạo chữ ký số HMAC
+      - alert: HighHmacSignatureFailureRate
+        expr: sum(rate(gateway_hmac_invalid_signature_total[1m])) > 5
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Cảnh báo tấn công giả mạo request"
+          description: "Có nhiều request bị API Gateway từ chối do sai chữ ký số HMAC."

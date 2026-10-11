@@ -1,0 +1,60 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: transaction-engine
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: BINH1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+fintech:
+  kafka:
+    topics:
+      transaction-events: fintech.transactions
+
+ledger:
+  grpc:
+    host: ${LEDGER_GRPC_HOST:localhost}
+    port: ${LEDGER_GRPC_PORT:50051}
+
+grpc:
+  client:
+    ledger-service:
+      address: ${LEDGER_GRPC_ADDRESS:static://localhost:50051}
+      negotiation-type: plaintext
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

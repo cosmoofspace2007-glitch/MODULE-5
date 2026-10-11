@@ -1,0 +1,40 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: AccountCoreLedgerServices
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: BINH1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  grpc:
+    server:
+      port: ${GRPC_PORT:50051}
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,prometheus
+    endpoint:
+      health:
+        show-details: always
+    prometheus:
+      metrics:
+        export:
+          enabled: true
+    metrics:
+      tags:
+        application: ${spring.application.name}
