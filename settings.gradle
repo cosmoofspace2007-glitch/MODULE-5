@@ -1,6 +1,6 @@
 rootProject.name = 'MODULE-5-1'
 include 'AccountCoreLedgerServices'
-include 'ApiGatewaySecurityProxy'
+include 'APIGatewaySecurityProxy'
 include 'FraudDetectionRiskManagementService'
 include 'PaymentGatewayIntegrationService'
 include 'ledger-contract'

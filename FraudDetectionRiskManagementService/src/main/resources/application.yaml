@@ -5,6 +5,12 @@ spring:
   application:
     name: fraud-detection-service
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: BINH1234
+    driver-class-name: org.postgresql.Driver
+
   data:
     redis:
       host: ${REDIS_HOST:localhost}
