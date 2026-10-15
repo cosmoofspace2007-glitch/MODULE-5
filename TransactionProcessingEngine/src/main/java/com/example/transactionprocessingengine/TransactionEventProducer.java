@@ -29,7 +29,7 @@ public class TransactionEventProducer {
                     if (ex != null) {
                         log.error("Failed to publish transaction event: txId={}", event.getTransactionId(), ex);
                     } else {
-                        log.debug("Event published to partition {} offset {}",
+                        log.info("Event published to partition {} offset {}",
                                 result.getRecordMetadata().partition(),
                                 result.getRecordMetadata().offset());
                     }

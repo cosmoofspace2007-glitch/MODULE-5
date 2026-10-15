@@ -57,4 +57,54 @@ public class TransferController {
                 "lastEntryTimestamp", balance.getLastEntryTimestamp()
         ));
     }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<TransferResponseDto> withdraw(
+            @RequestHeader("X-Idempotency-Key") String idempotencyKey,
+            @Valid @RequestBody WithdrawRequestDto request) {
+
+        log.info("Received withdrawal request: key={}, account={}, amount={}",
+                idempotencyKey, request.getUserAccountId(), request.getAmount());
+
+        TransferRequestDto transfer = TransferRequestDto.builder()
+                .fromAccountId(request.getUserAccountId())
+                .toAccountId("ACC_SYSTEM_CLEARING")
+                .amount(request.getAmount())
+                .currency(request.getCurrency() == null
+                        ? "VND" : request.getCurrency())
+                .description("WITHDRAWAL:" + request.getReferenceCode())
+                .build();
+
+        TransferResponseDto response =
+                transferService.processTransfer(idempotencyKey, transfer);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/bill-payment")
+    public ResponseEntity<TransferResponseDto> payBill(
+            @Valid @RequestBody BillPaymentRequestDto request) {
+
+        String billReference = request.getBillReference().trim();
+
+        // Một hóa đơn luôn sử dụng cùng idempotency key.
+        String idempotencyKey = "BILLPAY-" + billReference;
+
+        log.info("Received bill payment: key={}, account={}, amount={}",
+                idempotencyKey, request.getUserAccountId(), request.getAmount());
+
+        TransferRequestDto transfer = TransferRequestDto.builder()
+                .fromAccountId(request.getUserAccountId())
+                .toAccountId("ACC_SYSTEM_CLEARING")
+                .amount(request.getAmount())
+                .currency(request.getCurrency() == null
+                        ? "VND" : request.getCurrency())
+                .description("BILL_PAYMENT:" + billReference)
+                .build();
+
+        TransferResponseDto response =
+                transferService.processTransfer(idempotencyKey, transfer);
+
+        return ResponseEntity.ok(response);
+    }
 }

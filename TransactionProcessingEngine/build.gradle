@@ -19,12 +19,12 @@ repositories {
 }
 
 dependencies {
+    implementation project(':ledger-contract')
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.redisson:redisson-spring-boot-starter:4.7.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'net.devh:grpc-client-spring-boot-starter:2.15.0.RELEASE'
-    implementation project(':ledger-contract')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     compileOnly 'org.projectlombok:lombok'

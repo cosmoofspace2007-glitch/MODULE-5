@@ -17,7 +17,7 @@ import org.springframework.grpc.server.service.GrpcService;
 public class LedgerGrpcServiceImpl extends LedgerServiceGrpc.LedgerServiceImplBase {
     private final DoubleEntryLedgerService doubleEntryLedgerService;
 
-    public void recordTransfer(TransferLedgerRequest request, StreamObserver<LedgerResponse> responseObserver) {
+    public void recordTransfer(com.fintech.grpc.ledger.TransferLedgerRequest request, StreamObserver<LedgerResponse> responseObserver) {
         log.info("Received gRPC recordTransfer: txId={}, from={}, to={}, amount={}",
                 request.getTransactionId(), request.getFromAccountId(), request.getToAccountId(), request.getAmount());
         try {

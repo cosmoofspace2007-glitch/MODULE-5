@@ -28,7 +28,7 @@ public class BankWebhookService {
     /*
      * URL của Transaction Engine.
      */
-    private final String transactionEngineUrl = "http://transaction-engine:8082";
+    private final String transactionEngineUrl = "http://localhost:8082";
 
     public BankWebhookService(
             StringRedisTemplate redisTemplate
@@ -153,31 +153,19 @@ public class BankWebhookService {
             BankWebhookPayload payload
     ) {
 
-        String url =
-                transactionEngineUrl
-                        + "/api/v1/transfers/topup";
+        String url = transactionEngineUrl + "/api/v1/transfers/topup";
 
-        Map<String, Object> requestBody =
-                Map.of(
-                        "bankRefId",
-                        payload.getBankRefId(),
-
-                        "accountNumber",
-                        payload.getAccountNumber(),
-
-                        "amount",
-                        payload.getAmount(),
-
-                        "currency",
-                        "VND"
-                );
-
-        HttpHeaders headers =
-                new HttpHeaders();
-
-        headers.setContentType(
-                MediaType.APPLICATION_JSON
+        Map<String, Object> requestBody = Map.of(
+                "userAccountId", payload.getAccountNumber(),
+                "bankRefId", payload.getBankRefId(),
+                "amount", payload.getAmount(),
+                "currency", "VND"
         );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        headers.set("X-Idempotency-Key", payload.getBankRefId());
 
         HttpEntity<Map<String, Object>> request =
                 new HttpEntity<>(
